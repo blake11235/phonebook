@@ -6,19 +6,15 @@
 
 #include IMPL
 
-#if defined ORIG
-#define OUT_FILE "orig.txt"
-
-#elif defined OPT
+#ifdef OPT
 #define OUT_FILE "opt.txt"
-
-#else
+#elif
+#define OUT_FILE "orig.txt"
+#elif
 #define OUT_FILE "BKDR_hash.txt"
 #endif
 
 #define DICT_FILE "./dictionary/words.txt"
-
-
 
 static double diff_in_second(struct timespec t1, struct timespec t2)
 {
@@ -32,7 +28,6 @@ static double diff_in_second(struct timespec t1, struct timespec t2)
     }
     return (diff.tv_sec + diff.tv_nsec / 1000000000.0);
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -48,33 +43,13 @@ int main(int argc, char *argv[])
         printf("cannot open the file\n");
         return -1;
     }
-#ifdef ORIG
-    /*build the entry */
+
+    /* build the entry */
     entry *pHead, *e;
     pHead = (entry *) malloc(sizeof(entry));
     printf("size of entry : %lu bytes\n", sizeof(entry));
     e = pHead;
     e->pNext = NULL;
-#endif
-#ifdef OPT
-    /*build the entry */
-    entry *pHead, *e;
-    pHead = (entry *) malloc(sizeof(entry));
-    printf("size of entry : %lu bytes\n", sizeof(entry));
-    e = pHead;
-    e->pNext = NULL;
-#endif
-#ifdef BKDR_HASH
-    /* build the entry for hash*/
-    entry *pHead[HASH_TABLE_SIZE];
-    entry **e;
-    int j;
-    for(j = 0; j < HASH_TABLE_SIZE; j++) {
-        pHead[j] = (entry *) malloc(sizeof(entry));
-    }
-    printf("size of entry : %lu bytes\n", sizeof(entry));
-    e = &pHead[0];
-#endif
 
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
@@ -87,7 +62,6 @@ int main(int argc, char *argv[])
         i = 0;
         e = append(line, e);
     }
-
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
 
@@ -120,22 +94,12 @@ int main(int argc, char *argv[])
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
 
-#ifdef BKDR_HASH
-    /* free entry*/
-    for(j = 0; j<HASH_TABLE_SIZE; j++) {
-        do {
-            e = pHead[j]->pNext;
-            free(pHead[j]);
-            pHead[j] = e;
-        } while(pHead[j]);
-    }
-#else
-    /* free linked list of entry*/
+    /* free linked list of entry */
     do {
         e = pHead;
         pHead = pHead->pNext;
         free(e);
     } while (pHead);
-#endif
+
     return 0;
 }

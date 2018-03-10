@@ -1,12 +1,12 @@
 #ifndef _PHONEBOOK_H
 #define _PHONEBOOK_H
 
-#define ORIG 1
+#define BKDR_HASH 1
 #define MAX_LAST_NAME_SIZE 16
+#define HASH_TABLE_SIZE 8192
 
-/* original version */
-typedef struct __PHONE_BOOK_ENTRY {
-    char lastName[MAX_LAST_NAME_SIZE];
+/* optial version */
+typedef struct __PHONE_BOOK_DETAIL {
     char firstName[16];
     char email[16];
     char phone[10];
@@ -16,10 +16,17 @@ typedef struct __PHONE_BOOK_ENTRY {
     char city[16];
     char state[2];
     char zip[5];
+} detail;
+
+typedef struct __PHONE_BOOK_ENTRY {
+    char lastName[MAX_LAST_NAME_SIZE];
+    detail *details;
     struct __PHONE_BOOK_ENTRY *pNext;
 } entry;
 
-entry *findName(char lastName[], entry *pHead);
-entry *append(char lastName[], entry *e);
+entry *findName(char lastname[], entry **pHead);
+entry *append(char lastName[], entry **e);
+
+
 
 #endif

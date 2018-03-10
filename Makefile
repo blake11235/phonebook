@@ -3,7 +3,8 @@ CFLAGS_common ?= -Wall -std=gnu99
 CFLAGS_orig = -O0
 CFLAGS_opt  = -O0
 
-EXEC = phonebook_orig phonebook_opt
+
+EXEC = phonebook_orig phonebook_opt phonebook_bkdr
 
 GIT_HOOKS := .git/hooks/applied
 .PHONY: all
@@ -24,6 +25,12 @@ phonebook_opt: $(SRCS_common) phonebook_opt.c phonebook_opt.h
 	$(CC) $(CFLAGS_common) $(CFLAGS_opt) \
 		-DIMPL="\"$@.h\"" -o $@ \
 		$(SRCS_common) $@.c
+
+phonebook_bkdr: $(SRCS_common) phonebook_bkdr.c phonebook_opt.h
+	$(CC) $(CFLAGS_common) $(CFLAGS_opt) \
+		-DIMPL="\"$@.h\"" -o $@ \
+		$(SRCS_common) $@.c
+
 
 run: $(EXEC)
 	echo 3 | sudo tee /proc/sys/vm/drop_caches
